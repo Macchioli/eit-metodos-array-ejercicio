@@ -1,0 +1,16 @@
+.user-image{
+    width: 60px;
+    height: 60px;
+    object-fit: conver;
+    border-radius: 50%;
+}
+.user-table{
+    td{
+        vertical-align: middle;
+    }
+}
+
+.user-list{
+    width: 100%;
+    overflow-x: scroll;
+}
