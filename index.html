@@ -20,7 +20,15 @@
                 </div>
             </div>
             <div class="col-12 col-lg-8">
-                <div class="user-list bg-info-subtle" id="table-container">
+                <div class="user-list" id="table-container">
+                    <!-- User search -->
+                    <div class="user-search">
+                        <div class="mb-3">
+                            <label for="user-search" class="form-label">Buscar usuario</label>
+                            <input  type="text" class="form-control" id="user-search" onkeyup="inputSearch(event)"> <!-- con onchange mando la data que tiene el evento onchange : onchange="inputSearch(event) / es mejor usar onkeyup para que cuando presiono tecla y suelto lo dispara -->
+                        </div>
+                    </div>
+                    <!-- Tabla de usuarios -->
                     <table class="user-table table table-dark table-striped">
                         <thead>
                           <tr>
@@ -32,15 +40,7 @@
                           </tr>
                         </thead>
                         <tbody id="table-body">
-                          <tr>
-                            <td>
-                                <img class="user-image" src="https://oyster.ignimgs.com/mediawiki/apis.ign.com/mario-kart-for-wii-u/b/bf/Mk8iconmario.png?width=325" alt="user 1">
-                            </td>
-                            <td class="user-name">Mario Bros</td>
-                            <td class="user-email">mario@gmail.com</td>
-                            <td class="user-location">Ciudad Honguito</td>
-                            <td class="user-actions"></td>
-                          </tr>
+                          
                         </tbody>
                     </table>
                 </div>

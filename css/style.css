@@ -14,3 +14,7 @@
     width: 100%;
     overflow-x: scroll;
 }
+
+.user-search{
+    padding: .5rem;
+}

@@ -89,14 +89,43 @@ const tableBodyHTML = document.getElementById("table-body");
 
 console.log(tableBodyHTML); /* Corroboro si devuelve la tabla - puedo aplicar console.dir para levantar todas las propiedades */
 
-users.forEach((user) => {
-    tableBodyHTML.innerHTML+=`<tr>
-                                    <td>
-                                        <img class="user-image" src="${user.image}" alt="${user.fullname} avatar">
-                                    </td>
-                                    <td class="user-name">${user.fullname}</td>
-                                    <td class="user-email">${user.email}</td>
-                                    <td class="user-location">${user.location}</td>
-                                    <td class="user-actions"></td>
-                              </tr>`
-});
+function renderUsers(arrayUsers){
+
+    tableBodyHTML.innerHTML = ''; //Cada vez que ingresamos a la función limpiamos el body de la tabla y lo regeneramos  segun la búsqueda
+    arrayUsers.forEach((user) => {
+        tableBodyHTML.innerHTML+=`<tr>
+                                        <td>
+                                            <img class="user-image" src="${user.image}" alt="${user.fullname} avatar">
+                                        </td>
+                                        <td class="user-name">${user.fullname}</td>
+                                        <td class="user-email">${user.email}</td>
+                                        <td class="user-location">${user.location}</td>
+                                        <td class="user-actions"></td>
+                                  </tr>`
+    });
+}
+
+renderUsers(users); //La llamo para inicializar la tabla en primera carga.
+
+
+// onKeyUp
+function inputSearch(parametro){
+    // console.log(parametro) /* Imprimo en consola para ver que recibo */
+    console.log(parametro.target.value); /* Obtengo el target que es el contenido entero del input */
+
+    //Tomar lo que la persona ha escrito en el input
+    const search = parametro.target.value.toLowerCase();
+    //Luego deberiamos recorrer el array y filtrar por todos aquellos usuarios cuyo nombre coincidan con la búsqueda
+    const filteredUsers = users.filter((usr) => {
+        //Filter para devolver un usuario yo tengo que asegurarme de retornar un true bajo cierta condicion
+        if(usr.fullname.toLowerCase().includes(search)){
+            return true;
+        }
+        return false;
+    })
+    //Pintamos nuevamente la tabla, solo que ahora con los resultados que quedaron en el filtro
+    console.log(filteredUsers) //Imprimo consola para chequear filtrados
+    renderUsers(filteredUsers);
+}
+
+
