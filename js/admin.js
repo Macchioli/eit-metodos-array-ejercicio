@@ -108,7 +108,7 @@ function renderUsers(arrayUsers){
 renderUsers(users); //La llamo para inicializar la tabla en primera carga.
 
 
-// onKeyUp
+// onKeyUp - Filter
 function inputSearch(parametro){
     // console.log(parametro) /* Imprimo en consola para ver que recibo */
     console.log(parametro.target.value); /* Obtengo el target que es el contenido entero del input */
@@ -126,6 +126,40 @@ function inputSearch(parametro){
     //Pintamos nuevamente la tabla, solo que ahora con los resultados que quedaron en el filtro
     console.log(filteredUsers) //Imprimo consola para chequear filtrados
     renderUsers(filteredUsers);
+}
+
+// Ordenar
+function sortAsc(){
+    users.sort((a,b)=>{
+        if(a.fullname.toLowerCase() > b.fullname.toLowerCase()){
+            return 1;
+        }
+        if(a.fullname.toLowerCase() < b.fullname.toLowerCase()){
+            return -1;
+        }
+        return 0;
+    })    
+    renderUsers(users);
+}
+
+function sortDesc(){
+
+    //? Metodo alternativo con API:  const collator = new Intl.Collator(undefined, {sensitivity: 'base'}) /* Llamo a API + nueva */
+
+    // console.log('Se llamó a funcion ordenar descendente') //Corroboro que llamo bien a la funcion
+    users.sort((a,b)=>{
+
+        //? Metodo Alternativo: return collator.compare(b.fullname, a.fullname); /* Alternativa utilizando API Internacionalización de JS */        
+
+        if(a.fullname.toLowerCase() < b.fullname.toLowerCase()){
+            return 1;
+        }
+        if(a.fullname.toLowerCase() > b.fullname.toLowerCase()){
+            return -1;
+        }
+        return 0;
+    })    
+    renderUsers(users);
 }
 
 
