@@ -87,12 +87,21 @@ tableHTML.innerHTML = `<h2> Valor modificado desde JS </h2>` */
 // Obtener body de la tabla
 const tableBodyHTML = document.getElementById("table-body");
 
+//Obtener total
+const totalHTML = document.getElementById('total');
+
 console.log(tableBodyHTML); /* Corroboro si devuelve la tabla - puedo aplicar console.dir para levantar todas las propiedades */
 
 function renderUsers(arrayUsers){
 
     tableBodyHTML.innerHTML = ''; //Cada vez que ingresamos a la función limpiamos el body de la tabla y lo regeneramos  segun la búsqueda
+    //Defino una variable total
+    let total = 0;
+
     arrayUsers.forEach((user) => {
+        //Acumulo edades
+        total += user.age;
+        
         tableBodyHTML.innerHTML+=`<tr>
                                         <td>
                                             <img class="user-image" src="${user.image}" alt="${user.fullname} avatar">
@@ -100,13 +109,47 @@ function renderUsers(arrayUsers){
                                         <td class="user-name">${user.fullname}</td>
                                         <td class="user-email">${user.email}</td>
                                         <td class="user-location">${user.location}</td>
-                                        <td class="user-actions"></td>
-                                  </tr>`
+                                        <td class="user-actions">
+                                            <button class="btn btn-danger btn-sm" onclick="deleteUser('${user.id}')"> <i class="fa-solid fa-trash"></i></button>
+                                            <button class="btn btn-primary btn-sm"><i class="fa-solid fa-pencil"></i></button>
+                                        </td>
+                                  </tr>` /* El ${user.id} lo encierro entre '' para pasarlo a string y que no lo trate como numero */
     });
+
+    totalHTML.innerText = `$ ${total} ` /* Sumatoria de edades. */
 }
 
 renderUsers(users); //La llamo para inicializar la tabla en primera carga.
 
+// Delete User
+function deleteUser(idUser){
+    console.log(`Funciona el delete al user ${idUser}` )
+
+    // Debería buscar el indice de ese elemento en el array
+    const indice = users.findIndex((usr) =>{
+        //Chequeo cuando el idUser coincide con el id de mi usr.
+        if(idUser === usr.id){
+            return true;
+        }
+    })
+    // Contemplar si no existe el usuario
+    if(indice < 0){
+        // alert("El usuario no se encontró")
+        // Swal.fire("Error!", "No se encontró el usuario", "error")
+        Swal.fire({
+            title: "Error!",
+            text:"No se encontró el usuario",
+            icon:"error",
+            timer: 3000
+        })
+        return
+    }
+    // Debería eliminar el elemento del array
+    users.splice(indice, 1)
+    // Debería volver a píntar la tabla
+    renderUsers(users)
+
+}
 
 // onKeyUp - Filter
 function inputSearch(parametro){
@@ -161,5 +204,7 @@ function sortDesc(){
     })    
     renderUsers(users);
 }
+
+
 
 
