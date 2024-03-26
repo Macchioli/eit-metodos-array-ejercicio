@@ -76,6 +76,43 @@ users.forEach((user) => {
 // Defino tabla
 
 const tableHTML = document.getElementById("table-container");
+const userFormHTML = document.querySelector("#user-form"); /* Obtengo el formulario html */
+
+userFormHTML.addEventListener("submit", (evento) =>{ /* Recibo "evento" que me envia el submit o cualquier otro evento que quiera disparar */
+    evento.preventDefault() /* Lo que hago con esto es prevenir el comportamiento que tiene por defecto el formulario de enviarse y recargarse */
+    
+    const el = evento.target.elements /* Obtengo el valor del target del evento y todos sus elementos los guardo en una variable a la cual puedo acceder */
+    
+    if(el["password-repeat"].value !== el.password.value){
+        Swal.fire("Error", "Las contraseñas no coinciden", "warning")
+        return
+    } /* Catcheo error de coincidencia de contraseña */
+    
+    const nuevoUsuario ={
+        id: crypto.randomUUID(), /* Simulamos un ID con este metodo. */
+        fullname: el.fullname.value,
+        email: el.email.value,
+        password: el.password.value,
+        location: el.location.value,
+        image: el.image.value,
+        bornDate: new Date(el.bornDate.value).getTime(), /* Lo transformo en un timestamp que es lo que voy a guardar */
+        active: el.active.checked /* No tomamos el value en checkbox sino checked para tomar true/false */
+        // numero: +el.numero.value /* Ejemplo de valor numerico para que no lo convierta a string le ponemos un + adelante */
+    }
+
+    console.log(nuevoUsuario)
+    users.push(nuevoUsuario)
+    renderUsers(users);
+    // console.log(el.fullname.value)
+    // console.log(el.email.value)
+    // console.log(el.password.value)
+    // console.log(el["password-repeat"].value) /* Accedo de esta manera ya que el " - " no lo interpreta */
+    // console.log(el.bornDate.value)
+    // console.log(el.location.value)
+    // console.log(el.image.value)
+    // console.log(el.active.value)
+}) /* Lo ponemos al elemento html a escucharlo: espera (evento, funcion) (el evento que antes era onClick ahora "click" solo en JS) */
+
 
 /* console.log(tableHTML.innerHTML);
 tableHTML.innerHTML = `<h2> Valor modificado desde JS </h2>` */
