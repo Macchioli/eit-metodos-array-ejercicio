@@ -78,6 +78,9 @@ users.forEach((user) => {
 const tableHTML = document.getElementById("table-container");
 const userFormHTML = document.querySelector("#user-form"); /* Obtengo el formulario html */
 
+// Obtengo los botones /Defino y luego de que pintamos la tabla obtenemos los botones con el atributo data-edit
+let userButtonsEdit;
+
 userFormHTML.addEventListener("submit", (evento) =>{ /* Recibo "evento" que me envia el submit o cualquier otro evento que quiera disparar */
     evento.preventDefault() /* Lo que hago con esto es prevenir el comportamiento que tiene por defecto el formulario de enviarse y recargarse */
     
@@ -103,6 +106,12 @@ userFormHTML.addEventListener("submit", (evento) =>{ /* Recibo "evento" que me e
     console.log(nuevoUsuario)
     users.push(nuevoUsuario)
     renderUsers(users);
+
+    // Limpiamos el formulario
+    userFormHTML.reset();
+    // Hacemos foco en el primer input
+    el.fullname.focus();
+
     // console.log(el.fullname.value)
     // console.log(el.email.value)
     // console.log(el.password.value)
@@ -148,12 +157,61 @@ function renderUsers(arrayUsers){
                                         <td class="user-location">${user.location}</td>
                                         <td class="user-actions">
                                             <button class="btn btn-danger btn-sm" onclick="deleteUser('${user.id}')"> <i class="fa-solid fa-trash"></i></button>
-                                            <button class="btn btn-primary btn-sm"><i class="fa-solid fa-pencil"></i></button>
+                                            <button class="btn btn-primary btn-sm" data-edit="${user.id}"><i class="fa-solid fa-pencil"></i></button>
                                         </td>
                                   </tr>` /* El ${user.id} lo encierro entre '' para pasarlo a string y que no lo trate como numero */
     });
 
     totalHTML.innerText = `$ ${total} ` /* Sumatoria de edades. */
+    updateEditButtons(); //Llamo a la funcion
+}
+
+function updateEditButtons(){
+    userButtonsEdit = document.querySelectorAll('button[data-edit]') /* Adquiero todos los que tienen este atributo que pongo entre corchetes [] */ 
+    //console.log(userButtonsEdit) //Veo los botones obtenidos que tienen ciertos métodos y propiedades
+
+    userButtonsEdit.forEach((btn) =>{ //Recorro y obtengo todos los botones
+        //console.log(btn) 
+        btn.addEventListener('click', (evt) =>{
+            //console.log(evt.currentTarget) //Le agrego a todos los botones el evento de escuchar el 'click' y dispara una funcion flecha que recibe el evento y muestra el target por el console log
+
+            const id = evt.currentTarget.dataset.edit //Saco el id del boton que se haya clickeado y por medio del "dataset" la propiedad edit "([data-edit])" sin el data- / Uso currentTarget para que tome donde hago click y no los hijos (el lapiz font awesome por ejemplo)
+
+            console.log(id) //Imprimo para corroborar
+
+            completeUserForm(id);
+        }) 
+    }) 
+}
+
+function completeUserForm(idUser){
+    console.log(`Complete Form ${idUser}`)
+    
+    //Buscar el usuario y obtenerlo
+    const user = users.find((usr) =>{
+        if(usr.id === idUser){
+            return true
+        }
+        return false
+    })
+    //Considero en caso de no haber obtenido un usuario
+    if(!user){
+        Swal.fire("Error", "No se encontro usuario")
+        return
+    }
+    //Rellenar el formulario con los datos de este usuario
+    const el = userFormHTML.elements;
+
+    el.fullname.value = user.fullname;
+    el.email.value = user.email;
+    el.password.value = user.password;
+    el["password-repeat"].value = user.password;
+    el.location.value = user.location;
+    el.image.value = user.image;
+    el.active.checked = user.active;
+    el.bornDate.valueAsNumber = user.bornDate
+
+
 }
 
 renderUsers(users); //La llamo para inicializar la tabla en primera carga.
