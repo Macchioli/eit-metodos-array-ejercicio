@@ -81,6 +81,16 @@ const userFormHTML = document.querySelector("#user-form"); /* Obtengo el formula
 // Obtengo los botones /Defino y luego de que pintamos la tabla obtenemos los botones con el atributo data-edit
 let userButtonsEdit;
 
+
+//Defino variable global como bandera
+let isEditing;
+
+//Obtengo el boton submit para cambiar sus estilos y el texto del boton
+const btnSubmitHTML = document.querySelector("button[type='submit']") //alternativa solo recorrer el userFormHTML.queryselector...
+const formContainerHTML = document.querySelector(".user-form-container")
+//console.log(btnSubmitHTML)//imprimo para corroborar que lo obtengo
+
+
 userFormHTML.addEventListener("submit", (evento) =>{ /* Recibo "evento" que me envia el submit o cualquier otro evento que quiera disparar */
     evento.preventDefault() /* Lo que hago con esto es prevenir el comportamiento que tiene por defecto el formulario de enviarse y recargarse */
     
@@ -90,9 +100,14 @@ userFormHTML.addEventListener("submit", (evento) =>{ /* Recibo "evento" que me e
         Swal.fire("Error", "Las contraseñas no coinciden", "warning")
         return
     } /* Catcheo error de coincidencia de contraseña */
-    
+    /* let id;
+    if(isEditing){
+        id = isEditing;
+    }else{
+        id = crypto.randomUUID()
+    } */ //alternativa en id aqui debajo: 
     const nuevoUsuario ={
-        id: crypto.randomUUID(), /* Simulamos un ID con este metodo. */
+        id: isEditing ? isEditing : crypto.randomUUID(), /* Simulamos un ID con este metodo. Valor ternario */
         fullname: el.fullname.value,
         email: el.email.value,
         password: el.password.value,
@@ -104,11 +119,34 @@ userFormHTML.addEventListener("submit", (evento) =>{ /* Recibo "evento" que me e
     }
 
     console.log(nuevoUsuario)
-    users.push(nuevoUsuario)
+
+    //Debo establecer un condicional para saber si tengo que pushear un elemento al array (nuevo usuario) o si estoy editando y tengo que buscar un usuario y reemplazarlo
+
+    if(isEditing){
+        //Buscar un usuario y reemplazarlo
+        const userIndex = users.findIndex(user =>{
+            return user.id === isEditing;
+        })
+        users[userIndex] = nuevoUsuario
+
+    }else{
+        //Agregar un usuario ya que es un user nuevo
+        users.push(nuevoUsuario)
+    }
+
     renderUsers(users);
+
+    //Formateamos el formulario
+    isEditing = null;
+    formContainerHTML.classList.remove('form-edit')
+
+    btnSubmitHTML.classList.add('btn-primary')
+    btnSubmitHTML.classList.remove('btn-success')
+    btnSubmitHTML.innerText = "Agregar";
 
     // Limpiamos el formulario
     userFormHTML.reset();
+
     // Hacemos foco en el primer input
     el.fullname.focus();
 
@@ -187,6 +225,7 @@ function updateEditButtons(){
 function completeUserForm(idUser){
     console.log(`Complete Form ${idUser}`)
     
+    isEditing = idUser; // Si estoy editando le doy a la variable el valor id del usuario
     //Buscar el usuario y obtenerlo
     const user = users.find((usr) =>{
         if(usr.id === idUser){
@@ -211,6 +250,14 @@ function completeUserForm(idUser){
     el.active.checked = user.active;
     el.bornDate.valueAsNumber = user.bornDate
 
+
+
+
+    formContainerHTML.classList.add('form-edit')
+
+    btnSubmitHTML.classList.remove('btn-primary')
+    btnSubmitHTML.classList.add('btn-success')
+    btnSubmitHTML.innerText = "Editar";
 
 }
 
