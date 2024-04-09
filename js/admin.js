@@ -1,3 +1,7 @@
+import { transformTimestampToDate, calculateAge } from "./utils/date.js"; //Importo solo las funciones que necesito para este script para mejorar performance // Puedo usar por ejemplo: "calculateAge as A" y opero dentro de este script a la funcion como "A"
+
+import transformToUpperCase from "./utils/text.js"; //Ya que agregue export default no hace falta aplicar con llave ya que viene directamente, con llave es porque hemos 
+
 const users = [{
     fullname: 'John Doe',
     age: 30,
@@ -81,6 +85,9 @@ const userFormHTML = document.querySelector("#user-form"); /* Obtengo el formula
 // Obtengo los botones /Defino y luego de que pintamos la tabla obtenemos los botones con el atributo data-edit
 let userButtonsEdit;
 
+//Obtenemos input search y escuchamos el evento keyup para llamar a la funcion input search
+const inputSearchHTML = document.getElementById("user-search");
+inputSearchHTML.addEventListener("keyup", inputSearch) //Llama a la funcion input search y pasa todo el evento en este caso "keyup" alternativa ("keyup" (evt) => inputSearch(evt))
 
 //Defino variable global como bandera
 let isEditing;
@@ -193,8 +200,9 @@ function renderUsers(arrayUsers){
                                         <td class="user-name">${user.fullname}</td>
                                         <td class="user-email">${user.email}</td>
                                         <td class="user-location">${user.location}</td>
+                                        <td class="user-date">${transformTimestampToDate(user.bornDate)} <br> <small>${calculateAge(user.bornDate)}</small></td>
                                         <td class="user-actions">
-                                            <button class="btn btn-danger btn-sm" onclick="deleteUser('${user.id}')"> <i class="fa-solid fa-trash"></i></button>
+                                            <button class="btn btn-danger btn-sm" data-delete="${user.id}"> <i class="fa-solid fa-trash"></i></button>
                                             <button class="btn btn-primary btn-sm" data-edit="${user.id}"><i class="fa-solid fa-pencil"></i></button>
                                         </td>
                                   </tr>` /* El ${user.id} lo encierro entre '' para pasarlo a string y que no lo trate como numero */
@@ -202,7 +210,8 @@ function renderUsers(arrayUsers){
 
     totalHTML.innerText = `$ ${total} ` /* Sumatoria de edades. */
     updateEditButtons(); //Llamo a la funcion
-}
+    updateDeleteButtons();
+} //Fin de renderUsers
 
 function updateEditButtons(){
     userButtonsEdit = document.querySelectorAll('button[data-edit]') /* Adquiero todos los que tienen este atributo que pongo entre corchetes [] */ 
@@ -221,6 +230,21 @@ function updateEditButtons(){
         }) 
     }) 
 }
+
+function updateDeleteButtons(){
+    //Obtengo todos los botones "borrar" de la lista de usuarios
+    const userButtonsDelete = document.querySelectorAll('button[data-delete]'); //Adquiero todos los que tienen este atributo que pongo entre corchetes[]
+    //Por cada boton obtenido itero para agregar un listener del evento click en cada uno
+    userButtonsDelete.forEach((btn) =>{
+        btn.addEventListener('click', (evt)=>{
+            //Cuando se haga click en un boton especifico, tomo el valor del atributo data-delete para obtener el id
+            const id = evt.currentTarget.dataset.delete;
+            //Llamo a la funcion deleteUser y le envio el id
+            deleteUser(id);
+        })
+    })
+}
+
 
 function completeUserForm(idUser){
     console.log(`Complete Form ${idUser}`)
@@ -314,6 +338,11 @@ function inputSearch(parametro){
 }
 
 // Ordenar
+//Obtengo los elementos con ID Asc y Desc del html y escucho su click para llamar a la funciones correspondientes
+document.getElementById("sortAsc").addEventListener("click", sortAsc)
+document.getElementById("sortDesc").addEventListener("click", sortDesc)
+
+
 function sortAsc(){
     users.sort((a,b)=>{
         if(a.fullname.toLowerCase() > b.fullname.toLowerCase()){
