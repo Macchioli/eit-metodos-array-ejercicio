@@ -72,6 +72,9 @@ const users = [{
   },
 ];
 
+//Guardo en el local storage el array de usuarios
+localStorage.setItem("usuarios", JSON.stringify(users))
+
 // Recorrer el array
 users.forEach((user) => {
     console.log(user.fullname)
